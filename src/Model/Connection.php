@@ -5,7 +5,7 @@ namespace src\Model;
 use PDO;
 use PDOException;
 
-class DBManager
+class Connection
 {
 	private $dbh;
 	private static $instance = null;
@@ -13,7 +13,7 @@ class DBManager
 	public static function getInstance()
 	{
 		if (self::$instance === null)
-			self::$instance = new DBManager();
+			self::$instance = new Connection();
 		return self::$instance;
 	}
 	
@@ -38,5 +38,5 @@ class DBManager
 			$this->dbh = $this->connectToDb();
 		return $this->dbh;
 	}
-
+	
 }
