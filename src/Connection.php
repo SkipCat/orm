@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Model;
+namespace src;
 
 use PDO;
 use PDOException;
@@ -8,14 +8,6 @@ use PDOException;
 class Connection
 {
 	private $dbh;
-	private static $instance = null;
-	
-	public static function getInstance()
-	{
-		if (self::$instance === null)
-			self::$instance = new Connection();
-		return self::$instance;
-	}
 	
 	private function connectToDb()
 	{
