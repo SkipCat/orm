@@ -24,7 +24,7 @@ class Connection
 		return $dbh;
 	}
 	
-	protected function getDbh()
+	public function getDbh()
 	{
 		if ($this->dbh === null)
 			$this->dbh = $this->connectToDb();
