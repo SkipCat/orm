@@ -142,4 +142,16 @@ class Entity
 		return get_object_vars($this);
 	}
 	
+	public function delete($table, $id) {
+		$conn = new Connection();
+		$dbh = $conn->getDbh();
+		
+		$query = $dbh->query("DELETE FROM " . $table . " WHERE id = " . $id);
+		var_dump($query);
+		$sth = $dbh->prepare($query);
+		$sth->execute();
+		
+		return true;
+	}
+	
 }
