@@ -13,6 +13,9 @@ class Entity
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
+		//$data = $this->getAllProperties();
+		unset($data['id']);
+		
 		$query = 'INSERT INTO `' . $table . '` VALUES (NULL, ';
 		$first = true;
 		
@@ -133,6 +136,10 @@ class Entity
 		$paramOrderBy = substr($paramOrderBy, 0, -2); // remove last ','
 		
 		return $paramOrderBy;
+	}
+	
+	public function getAllProperties() {
+		return get_object_vars($this);
 	}
 	
 }
