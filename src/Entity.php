@@ -4,7 +4,6 @@ namespace src;
 
 use PDO;
 use src\Connection;
-use src\Translator;
 
 class Entity
 {
@@ -52,6 +51,11 @@ class Entity
 	{
 		$id = (int)$id;
 		$data = $this->findOne("SELECT * FROM " . $table . " WHERE id = " . $id);
+		if (!$data) {
+			return false;
+		}
+		
+		var_dump($data);
 		$object = $this->setObject($data);
 		
 		return $object;
@@ -188,6 +192,16 @@ class Entity
 		$name = ucfirst($name);
 		$setFunction = 'set' . $name;
 		$this->$setFunction($value);
+	}
+	
+	public function isExist($table, $id)
+	{
+		$result = $this->findById($table, $id);
+		if (!$result) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 }
