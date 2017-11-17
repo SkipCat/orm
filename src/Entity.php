@@ -52,8 +52,9 @@ class Entity
 	{
 		$id = (int)$id;
 		$data = $this->findOne("SELECT * FROM " . $table . " WHERE id = " . $id);
+		$object = $this->setObject($data);
 		
-		return $data;
+		return $object;
 	}
 	
 	public function findAll($table)
@@ -63,8 +64,9 @@ class Entity
 		
 		$data = $dbh->query("SELECT * FROM " . $table, PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
+		$objectsArray = $this->setAllObjects($result);
 		
-		return $result;
+		return $objectsArray;
 	}
 	
 	public function findWithParam($table, $where = null, $orderBy = null, $join = null)
@@ -111,14 +113,17 @@ class Entity
 		
 		$data = $dbh->query($query, PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
+		$objectsArray = $this->setAllObjects($result);
+		
 		var_dump($data);
 		var_dump($result);
 		
-		return true;
+		return $objectsArray;
 		
 	}
 	
-	public function where($data = []) {
+	public function where($data = [])
+	{
 		$paramWhere = '';
 		foreach ($data as $value) {
 			$paramWhere .= $value . ' AND ';
@@ -128,7 +133,8 @@ class Entity
 		return $paramWhere;
 	}
 	
-	private function orderBy($data = []) {
+	private function orderBy($data = [])
+	{
 		$paramOrderBy = '';
 		foreach ($data as $value) {
 			$paramOrderBy .= $value . ', ';
@@ -138,11 +144,13 @@ class Entity
 		return $paramOrderBy;
 	}
 	
-	public function getAllProperties() {
+	public function getAllProperties()
+	{
 		return get_object_vars($this);
 	}
 	
-	public function delete($table, $id) {
+	public function delete($table, $id)
+	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
@@ -154,4 +162,32 @@ class Entity
 		return true;
 	}
 	
+	public function setObject($array = [])
+	{
+		$object = new Film();
+		foreach ($array as $key => $value) {
+			$object->setProperty($key, $value);
+		}
+		
+		return $object;
+	}
+	
+	public function setAllObjects($data)
+	{
+		$objectsArray = [];
+		foreach ($data as $key => $array) {
+			$object = $this->setObject($array);
+			$objectsArray[$key] = $object;
+		}
+		
+		return $objectsArray;
+	}
+	
+	public function setProperty($name, $value)
+	{
+		$name = ucfirst($name);
+		$setFunction = 'set' . $name;
+		$this->$setFunction($value);
+	}
+
 }
