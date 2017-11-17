@@ -166,6 +166,27 @@ class Entity
 		return true;
 	}
 	
+	public function update($table, $id, $data = [])
+	{
+		$conn = new Connection();
+		$dbh = $conn->getDbh();
+		
+		$newValues = '';
+		foreach ($data as $key => $value) {
+			if ($key !== 'id') {
+				$newValues .= $key . ' = "' . $value . '", ';
+			}
+		}
+		$newValues = substr($newValues, 0, -2); // remove last ','
+		
+		$query = $dbh->query("UPDATE " . $table . " SET " . $newValues . " WHERE id = " . $id);
+		var_dump($query);
+		$sth = $dbh->prepare($query);
+		$sth->execute();
+		
+		return true;
+	}
+	
 	public function setObject($array = [])
 	{
 		$object = new Film();
