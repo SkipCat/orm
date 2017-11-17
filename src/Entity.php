@@ -12,12 +12,10 @@ class Entity
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
-		//$data = $this->getAllProperties();
-		unset($data['id']);
-		
 		$query = 'INSERT INTO `' . $table . '` VALUES (NULL, ';
 		$first = true;
 		
+		unset($data['id']);
 		foreach ($data AS $k => $value) {
 			if (!$first) {
 				$query .= ', ';
@@ -36,27 +34,17 @@ class Entity
 		return true;
 	}
 	
-	public function findOne($query)
+	public function findById($table, $id)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
-		$data = $dbh->query($query, PDO::FETCH_ASSOC);
+		$id = (int)$id;
+		$data = $dbh->query("SELECT * FROM " . $table . " WHERE id = " . $id, PDO::FETCH_ASSOC);
 		$result = $data->fetch();
 		
-		return $result;
-	}
-	
-	public function findById($table, $id)
-	{
-		$id = (int)$id;
-		$data = $this->findOne("SELECT * FROM " . $table . " WHERE id = " . $id);
-		if (!$data) {
-			return false;
-		}
-		
-		var_dump($data);
-		$object = $this->setObject($data);
+		$object = $this->setObject($result);
+		//$object = $data->fetchObject(get_called_class());
 		
 		return $object;
 	}
@@ -189,7 +177,7 @@ class Entity
 	
 	public function setObject($array = [])
 	{
-		$object = new Film();
+		$object = new static();
 		foreach ($array as $key => $value) {
 			$object->setProperty($key, $value);
 		}
