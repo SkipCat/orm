@@ -4,6 +4,7 @@ namespace src;
 
 use PDO;
 use src\Connection;
+use src\Log;
 
 class Entity
 {
@@ -31,6 +32,9 @@ class Entity
 		$sth = $dbh->prepare($query);
 		$sth->execute($data);
 		
+		$log = new Log();
+		$log->writeRequestLog($query, $data);
+		
 		return true;
 	}
 	
@@ -46,6 +50,9 @@ class Entity
 		$object = $this->setObject($result);
 		//$object = $data->fetchObject(get_called_class());
 		
+		$log = new Log();
+		$log->writeRequestLog($data->queryString);
+		
 		return $object;
 	}
 	
@@ -58,6 +65,9 @@ class Entity
 		$result = $data->fetchAll();
 		$objectsArray = $this->setAllObjects($result);
 		
+		$log = new Log();
+		$log->writeRequestLog($data->queryString);
+		
 		return $objectsArray;
 	}
 	
@@ -65,7 +75,7 @@ class Entity
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
-	
+		
 		if (null !== $where) {
 			if (null !== $orderBy) {
 				if (null !== $join) {
@@ -75,6 +85,7 @@ class Entity
 					$query = "SELECT * FROM " . $table . " WHERE " . $paramWhere;
 					
 					$paramOrderBy = $this->orderBy($orderBy);
+					var_dump($paramOrderBy);
 					$query = $query . " ORDER BY " . $paramOrderBy;
 				}
 			} else {
@@ -107,8 +118,8 @@ class Entity
 		$result = $data->fetchAll();
 		$objectsArray = $this->setAllObjects($result);
 		
-		var_dump($data);
-		var_dump($result);
+		$log = new Log();
+		$where == null ? $log->writeRequestLog($query) : $log->writeRequestLog($query, $paramWhere);
 		
 		return $objectsArray;
 		
@@ -125,7 +136,7 @@ class Entity
 		return $paramWhere;
 	}
 	
-	private function orderBy($data = [])
+	public function orderBy($data = [])
 	{
 		$paramOrderBy = '';
 		foreach ($data as $value) {
@@ -134,11 +145,6 @@ class Entity
 		$paramOrderBy = substr($paramOrderBy, 0, -2); // remove last ','
 		
 		return $paramOrderBy;
-	}
-	
-	public function getAllProperties()
-	{
-		return get_object_vars($this);
 	}
 	
 	public function delete($table, $id)
@@ -201,6 +207,11 @@ class Entity
 		$name = ucfirst($name);
 		$setFunction = 'set' . $name;
 		$this->$setFunction($value);
+	}
+	
+	public function getAllProperties()
+	{
+		return get_object_vars($this);
 	}
 	
 	public function isExist($table, $id)
