@@ -25,15 +25,14 @@ class Entity
 			}
 			$query .= ':' . $k;
 		}
-		
 		$query .= ')';
 		var_dump($query);
 		
 		$sth = $dbh->prepare($query);
-		$sth->execute($data);
+		$exec = $sth->execute($data);
 		
 		$log = new Log();
-		$log->writeRequestLog($query, $data);
+		$exec ? $log->writeRequestLog($query, $data) : $log->writeErrorLog($query, $data, $sth->errorInfo());
 		
 		return true;
 	}
@@ -47,13 +46,14 @@ class Entity
 		$data = $dbh->query("SELECT * FROM " . $table . " WHERE id = " . $id, PDO::FETCH_ASSOC);
 		$result = $data->fetch();
 		
-		$object = $this->setObject($result);
-		//$object = $data->fetchObject(get_called_class());
-		
 		$log = new Log();
-		$log->writeRequestLog($data->queryString);
-		
-		return $object;
+		if ($result) {
+			$log->writeRequestLog($data->queryString);
+			return $this->setObject($result);
+		} else {
+			$log->writeErrorLog($data->queryString, null, $data->errorInfo());
+			return false;
+		}
 	}
 	
 	public function findAll($table)
@@ -63,12 +63,15 @@ class Entity
 		
 		$data = $dbh->query("SELECT * FROM " . $table, PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
-		$objectsArray = $this->setAllObjects($result);
 		
 		$log = new Log();
-		$log->writeRequestLog($data->queryString);
-		
-		return $objectsArray;
+		if ($result) {
+			$log->writeRequestLog($data->queryString);
+			return $this->setAllObjects($result);
+		} else {
+			$log->writeErrorLog($data->queryString, null, $data->errorInfo());
+			return false;
+		}
 	}
 	
 	public function findWithParam($table, $where = null, $orderBy = null, $join = null)
@@ -85,7 +88,6 @@ class Entity
 					$query = "SELECT * FROM " . $table . " WHERE " . $paramWhere;
 					
 					$paramOrderBy = $this->orderBy($orderBy);
-					var_dump($paramOrderBy);
 					$query = $query . " ORDER BY " . $paramOrderBy;
 				}
 			} else {
@@ -116,13 +118,15 @@ class Entity
 		
 		$data = $dbh->query($query, PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
-		$objectsArray = $this->setAllObjects($result);
 		
 		$log = new Log();
-		$where == null ? $log->writeRequestLog($query) : $log->writeRequestLog($query, $paramWhere);
-		
-		return $objectsArray;
-		
+		if ($result) {
+			$log->writeRequestLog($query);
+			return $this->setAllObjects($result);
+		} else {
+			$log->writeErrorLog($query, $where, $data->errorInfo());
+			return false;
+		}
 	}
 	
 	public function where($data = [])
@@ -153,11 +157,16 @@ class Entity
 		$dbh = $conn->getDbh();
 		
 		$query = $dbh->query("DELETE FROM " . $table . " WHERE id = " . $id);
-		var_dump($query);
-		$sth = $dbh->prepare($query);
-		$sth->execute();
+		var_dump($query->queryString);
 		
-		return true;
+		$log = new Log();
+		if ($query) {
+			$log->writeRequestLog($query->queryString);
+			return true;
+		} else {
+			$log->writeErrorLog($query->queryString, null, $query->errorInfo());
+			return false;
+		}
 	}
 	
 	public function update($table, $id, $data = [])
@@ -174,11 +183,16 @@ class Entity
 		$newValues = substr($newValues, 0, -2); // remove last ','
 		
 		$query = $dbh->query("UPDATE " . $table . " SET " . $newValues . " WHERE id = " . $id);
-		var_dump($query);
-		$sth = $dbh->prepare($query);
-		$sth->execute();
+		var_dump($query->queryString);
 		
-		return true;
+		$log = new Log();
+		if ($query) {
+			$log->writeRequestLog($query->queryString, $newValues);
+			return true;
+		} else {
+			$log->writeErrorLog($query->queryString, $data, $query->errorInfo());
+			return false;
+		}
 	}
 	
 	public function setObject($array = [])
@@ -223,5 +237,5 @@ class Entity
 			return true;
 		}
 	}
-
+	
 }

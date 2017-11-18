@@ -4,6 +4,7 @@ namespace src;
 
 use PDO;
 use PDOException;
+use src\Log;
 
 class Connection
 {
@@ -19,6 +20,8 @@ class Connection
 			$dbh = new PDO($dsn, $db_config['user'], $db_config['password']);
 		} catch (PDOException $e) {
 			echo 'Connexion échouée : ' . $e->getMessage();
+			$log = new Log();
+			$log->writeErrorLog('Database connection', null, $e->getMessage());
 		}
 		
 		return $dbh;

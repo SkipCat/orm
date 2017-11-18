@@ -23,8 +23,11 @@ class Log
 	
 	public function writeErrorLog($request, $params, $error)
 	{
+		var_dump($request, $params, $error);
+		
 		$file = fopen('app/logs/error.log', 'a');
 		$params = $this->checkParams($params);
+		$error = $this->writeError($error);
 		
 		$log =
 			date('d-m-Y H:i:s') . "\r\n"
@@ -64,5 +67,28 @@ class Log
 		$params .= ']';
 		
 		return $params;
+	}
+	
+	public function writeError($data)
+	{
+		if (gettype($data) == 'string') {
+			return $data;
+		}
+		
+		// set key names
+		$data['SQLSTATE code'] = $data[0];
+		$data['Driver code'] = $data[1];
+		$data['Driver message'] = $data[2];
+		unset($data[0], $data[1], $data[2]);
+		
+		// set error message
+		$error = '[';
+		foreach ($data as $key => $value) {
+			$error .= $key . ' => ' . $value . ', ';
+		}
+		$error = substr($error, 0, -2); // remove last ','
+		$error .= ']';
+		
+		return $error;
 	}
 }

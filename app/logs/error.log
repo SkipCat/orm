@@ -1,0 +1,60 @@
+18-11-2017 19:58:11
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: Array
+ 
+18-11-2017 19:59:59
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: 0 => 00000, 1 => , 2 => ]
+ 
+18-11-2017 20:04:41
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => ]
+ 
+18-11-2017 20:06:49
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => ]
+ 
+18-11-2017 20:07:18
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => ]
+ 
+18-11-2017 20:07:37
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => ]
+ 
+18-11-2017 20:08:54
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => , SQLSTATE code => 00000, Driver code => , Driver message => ]
+ 
+18-11-2017 20:09:39
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [0 => 00000, 1 => , 2 => , SQLSTATE code => 00000, Driver code => , Driver message => ]
+ 
+18-11-2017 20:10:46
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => 143, genre => fantasy/syfy]
+___ ERROR: [SQLSTATE code => 00000, Driver code => , Driver message => ]
+ 
+18-11-2017 20:12:14
+___ REQUEST: INSERT INTO `film` VALUES (NULL, :title, :producer, :releaseDate, :duration, :genre)
+___ PARAMETERS: [title => Avengers, producer => Joss Whedon, releaseDate => 2012-04-25, duration => , genre => fantasy/syfy]
+___ ERROR: [SQLSTATE code => 23000, Driver code => 1048, Driver message => Column 'duration' cannot be null]
+ 
+18-11-2017 20:25:53
+___ REQUEST: SELECT * FROM film WHERE id = 10
+___ PARAMETERS: []
+___ ERROR: [SQLSTATE code => 00000, Driver code => , Driver message => ]
+ 
+18-11-2017 20:40:13
+___ REQUEST: SELECT * FROM film WHERE id = 10 ORDER BY id ASC
+___ PARAMETERS: [0 => id = 10]
+___ ERROR: [SQLSTATE code => 00000, Driver code => , Driver message => ]
+ 
