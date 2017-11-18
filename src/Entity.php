@@ -129,28 +129,6 @@ class Entity
 		}
 	}
 	
-	public function where($data = [])
-	{
-		$paramWhere = '';
-		foreach ($data as $value) {
-			$paramWhere .= $value . ' AND ';
-		}
-		$paramWhere = substr($paramWhere, 0, -5); 	// remove last 'AND'
-		
-		return $paramWhere;
-	}
-	
-	public function orderBy($data = [])
-	{
-		$paramOrderBy = '';
-		foreach ($data as $value) {
-			$paramOrderBy .= $value . ', ';
-		}
-		$paramOrderBy = substr($paramOrderBy, 0, -2); // remove last ','
-		
-		return $paramOrderBy;
-	}
-	
 	public function delete($table, $id)
 	{
 		$conn = new Connection();
@@ -195,6 +173,42 @@ class Entity
 		}
 	}
 	
+	public function isExist($table, $id)
+	{
+		$result = $this->findById($table, $id);
+		if (!$result) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public function count($table, $where = null)
+	{
+		$conn = new Connection();
+		$dbh = $conn->getDbh();
+		
+		if (null == $where) {
+			$query = "SELECT COUNT(*) FROM " . $table;
+		} else {
+			$paramWhere = $this->where($where);
+			$query = "SELECT COUNT(*) FROM " . $table . " WHERE " . $paramWhere;
+		}
+		
+		$query = $dbh->query($query, PDO::FETCH_ASSOC);
+		$count = $query->fetch();
+		
+		$log = new Log();
+		if ($count) {
+			$log->writeRequestLog($query->queryString, $where);
+			$count = array_shift(array_values($count));
+			return intval($count);
+		} else {
+			$log->writeErrorLog($query->queryString, $where, $query->errorInfo());
+			return false;
+		}
+	}
+	
 	public function setObject($array = [])
 	{
 		$object = new static();
@@ -228,14 +242,26 @@ class Entity
 		return get_object_vars($this);
 	}
 	
-	public function isExist($table, $id)
+	public function where($data = [])
 	{
-		$result = $this->findById($table, $id);
-		if (!$result) {
-			return false;
-		} else {
-			return true;
+		$paramWhere = '';
+		foreach ($data as $value) {
+			$paramWhere .= $value . ' AND ';
 		}
+		$paramWhere = substr($paramWhere, 0, -5); 	// remove last 'AND'
+		
+		return $paramWhere;
+	}
+	
+	public function orderBy($data = [])
+	{
+		$paramOrderBy = '';
+		foreach ($data as $value) {
+			$paramOrderBy .= $value . ', ';
+		}
+		$paramOrderBy = substr($paramOrderBy, 0, -2); // remove last ','
+		
+		return $paramOrderBy;
 	}
 	
 }
