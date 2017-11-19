@@ -79,7 +79,7 @@ class EntityManager
 		}
 	}
 	
-	public function findWithParam($where = null, $orderBy = null, $join = null)
+	public function findWithParam($join = null,  $where = null, $orderBy = null)
 	{
 		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
@@ -87,17 +87,20 @@ class EntityManager
 		if (null !== $where) {
 			if (null !== $orderBy) {
 				if (null !== $join) {
-					// where + join + orderBY
+					$paramWhere = $this->where($where);
+					$paramOrderBy = $this->orderBy($orderBy);
+					$query = "SELECT * FROM " . $this->getTable() . $join . " WHERE " . $paramWhere
+						. " ORDER BY " . $paramOrderBy;
 				} else {
 					$paramWhere = $this->where($where);
-					$query = "SELECT * FROM " . $this->getTable() . " WHERE " . $paramWhere;
-					
 					$paramOrderBy = $this->orderBy($orderBy);
-					$query = $query . " ORDER BY " . $paramOrderBy;
+					$query = "SELECT * FROM " . $this->getTable() . " WHERE " . $paramWhere
+						. " ORDER BY " . $paramOrderBy;
 				}
 			} else {
 				if (null !== $join) {
-					// where + join
+					$paramWhere = $this->where($where);
+					$query = "SELECT * FROM " . $this->getTable() . $join . " WHERE " . $paramWhere;
 				} else {
 					$paramWhere = $this->where($where);
 					$query = "SELECT * FROM " . $this->getTable() . " WHERE " . $paramWhere;
@@ -106,15 +109,15 @@ class EntityManager
 		} else {
 			if (null !== $orderBy) {
 				if (null !== $join) {
-					// join + orderBy
+					$paramOrderBy = $this->orderBy($orderBy);
+					$query = "SELECT * FROM " . $this->getTable() . $join . " ORDER BY " . $paramOrderBy;
 				} else {
 					$paramOrderBy = $this->orderBy($orderBy);
 					$query = "SELECT * FROM " . $this->getTable() . " ORDER BY " . $paramOrderBy;
 				}
 			} else {
 				if (null !== $join) {
-					//$paramJoin = $this->join($join);
-					$query = "SELECT * FROM " . $this->getTable() . " JOIN " . $join;
+					$query = "SELECT * FROM " . $this->getTable() . $join;
 				} else {
 					echo 'No parameter indicated.';
 					return false;
@@ -251,7 +254,9 @@ class EntityManager
 	{
 		$name = ucfirst($name);
 		$setFunction = 'set' . $name;
-		$this->$setFunction($value);
+		if (method_exists($this, $setFunction)) {
+			$this->$setFunction($value);
+		}
 	}
 	
 	public function getAllProperties()
