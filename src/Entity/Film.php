@@ -1,10 +1,10 @@
 <?php
 
-namespace src;
+namespace src\Entity;
 
-use src\Entity;
+use src\Model\EntityManager;
 
-class Film extends Entity
+class Film extends EntityManager
 {
 	protected $table = 'film';
 	protected $relatedTables = [

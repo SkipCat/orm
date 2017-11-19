@@ -1,8 +1,10 @@
 <?php
 
-namespace src;
+namespace src\Entity;
 
-class Showing extends Entity
+use src\Model\EntityManager;
+
+class Showing extends EntityManager
 {
 	protected $table = 'showing';
     protected $filmId;

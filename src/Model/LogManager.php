@@ -1,8 +1,8 @@
 <?php
 
-namespace src;
+namespace src\Model;
 
-class Log
+class LogManager
 {
 	public function writeRequestLog($request = [], $params = null)
 	{

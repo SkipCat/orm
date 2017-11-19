@@ -1,12 +1,12 @@
 <?php
 
-namespace src;
+namespace src\Model;
 
 use PDO;
 use PDOException;
-use src\Log;
+use src\Model\LogManager;
 
-class Connection
+class ConnectionManager
 {
 	private $dbh;
 	
@@ -20,7 +20,7 @@ class Connection
 			$dbh = new PDO($dsn, $db_config['user'], $db_config['password']);
 		} catch (PDOException $e) {
 			echo 'Connexion échouée : ' . $e->getMessage();
-			$log = new Log();
+			$log = new LogManager();
 			$log->writeErrorLog('Database connection', null, $e->getMessage());
 		}
 		

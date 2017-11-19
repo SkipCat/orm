@@ -1,17 +1,17 @@
 <?php
 
-namespace src;
+namespace src\Model;
 
 use PDO;
-use src\Connection;
-use src\Log;
-use src\Showing;
+use src\Model\ConnectionManager;
+use src\Model\LogManager;
+use src\Entity\Showing;
 
-class Entity
+class EntityManager
 {
 	public function insert()
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		$query = 'INSERT INTO `' . $this->getTable() . '` VALUES (NULL, ';
@@ -32,7 +32,7 @@ class Entity
 		$sth = $dbh->prepare($query);
 		$exec = $sth->execute($data);
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($exec) {
 			$log->writeRequestLog($query);
 			return true;
@@ -44,7 +44,7 @@ class Entity
 	
 	public function findById($id)
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		$id = (int)$id;
@@ -52,7 +52,7 @@ class Entity
 		$result = $data->fetch();
 		var_dump($result);
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($result) {
 			$log->writeRequestLog($data->queryString);
 			return $this->setObject($result);
@@ -64,13 +64,13 @@ class Entity
 	
 	public function findAll()
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		$data = $dbh->query("SELECT * FROM " . $this->getTable(), PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($result) {
 			$log->writeRequestLog($data->queryString);
 			return $this->setAllObjects($result);
@@ -82,7 +82,7 @@ class Entity
 	
 	public function findWithParam($where = null, $orderBy = null, $join = null)
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		if (null !== $where) {
@@ -126,7 +126,7 @@ class Entity
 		$data = $dbh->query($query, PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($result) {
 			$log->writeRequestLog($query);
 			return $this->setAllObjects($result);
@@ -138,21 +138,23 @@ class Entity
 	
 	public function delete($id)
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		// delete related entities first
-		foreach ($this->getRelatedTables() as $relatedTable) {
-			$fieldId = $this->getTable() . '_id';
-			$q = $dbh->query("DELETE FROM " . $relatedTable . " WHERE " . $fieldId . " = " . $id);
-			$log = new Log();
-			$q ? $log->writeRequestLog($q->queryString) : $log->writeErrorLog($q->queryString, null, $q->errorInfo());
+		if (method_exists($this, 'getRelatedTables')) {
+			foreach ($this->getRelatedTables() as $relatedTable) {
+				$fieldId = $this->getTable() . '_id';
+				$q = $dbh->query("DELETE FROM " . $relatedTable . " WHERE " . $fieldId . " = " . $id);
+				$log = new LogManager();
+				$q ? $log->writeRequestLog($q->queryString) : $log->writeErrorLog($q->queryString, null, $q->errorInfo());
+			}
 		}
 		
 		$query = $dbh->query("DELETE FROM " . $this->getTable() . " WHERE id = " . $id);
 		var_dump($query->queryString);
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($query) {
 			$log->writeRequestLog($query->queryString);
 			return true;
@@ -164,7 +166,7 @@ class Entity
 	
 	public function update()
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		$newValues = '';
@@ -179,7 +181,7 @@ class Entity
 			. " SET " . $newValues . " WHERE id = " . $this->getId());
 		var_dump($query->queryString);
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($query) {
 			$log->writeRequestLog($query->queryString, $newValues);
 			return true;
@@ -201,7 +203,7 @@ class Entity
 	
 	public function count($where = null)
 	{
-		$conn = new Connection();
+		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
 		if (null == $where) {
@@ -214,7 +216,7 @@ class Entity
 		$query = $dbh->query($query, PDO::FETCH_ASSOC);
 		$count = $query->fetch();
 		
-		$log = new Log();
+		$log = new LogManager();
 		if ($count) {
 			$log->writeRequestLog($query->queryString, $where);
 			$count = array_shift(array_values($count));
