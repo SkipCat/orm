@@ -8,12 +8,12 @@ use src\Log;
 
 class Entity
 {
-	public function insert($table)
+	public function insert()
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
-		$query = 'INSERT INTO `' . $table . '` VALUES (NULL, ';
+		$query = 'INSERT INTO `' . $this->getTable() . '` VALUES (NULL, ';
 		$first = true;
 		
 		$data = $this->getAllProperties();
@@ -41,14 +41,15 @@ class Entity
 		}
 	}
 	
-	public function findById($table, $id)
+	public function findById($id)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
 		$id = (int)$id;
-		$data = $dbh->query("SELECT * FROM " . $table . " WHERE id = " . $id, PDO::FETCH_ASSOC);
+		$data = $dbh->query("SELECT * FROM " . $this->getTable() . " WHERE id = " . $id, PDO::FETCH_ASSOC);
 		$result = $data->fetch();
+		var_dump($result);
 		
 		$log = new Log();
 		if ($result) {
@@ -60,12 +61,12 @@ class Entity
 		}
 	}
 	
-	public function findAll($table)
+	public function findAll()
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
-		$data = $dbh->query("SELECT * FROM " . $table, PDO::FETCH_ASSOC);
+		$data = $dbh->query("SELECT * FROM " . $this->getTable(), PDO::FETCH_ASSOC);
 		$result = $data->fetchAll();
 		
 		$log = new Log();
@@ -78,7 +79,7 @@ class Entity
 		}
 	}
 	
-	public function findWithParam($table, $where = null, $orderBy = null, $join = null)
+	public function findWithParam($where = null, $orderBy = null, $join = null)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
@@ -89,7 +90,7 @@ class Entity
 					// where + join + orderBY
 				} else {
 					$paramWhere = $this->where($where);
-					$query = "SELECT * FROM " . $table . " WHERE " . $paramWhere;
+					$query = "SELECT * FROM " . $this->getTable() . " WHERE " . $paramWhere;
 					
 					$paramOrderBy = $this->orderBy($orderBy);
 					$query = $query . " ORDER BY " . $paramOrderBy;
@@ -99,7 +100,7 @@ class Entity
 					// where + join
 				} else {
 					$paramWhere = $this->where($where);
-					$query = "SELECT * FROM " . $table . " WHERE " . $paramWhere;
+					$query = "SELECT * FROM " . $this->getTable() . " WHERE " . $paramWhere;
 				}
 			}
 		} else {
@@ -108,7 +109,7 @@ class Entity
 					// join + orderBy
 				} else {
 					$paramOrderBy = $this->orderBy($orderBy);
-					$query = "SELECT * FROM " . $table . " ORDER BY " . $paramOrderBy;
+					$query = "SELECT * FROM " . $this->getTable() . " ORDER BY " . $paramOrderBy;
 				}
 			} else {
 				if (null !== $join) {
@@ -133,12 +134,12 @@ class Entity
 		}
 	}
 	
-	public function delete($table, $id)
+	public function delete($id)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
-		$query = $dbh->query("DELETE FROM " . $table . " WHERE id = " . $id);
+		$query = $dbh->query("DELETE FROM " . $this->getTable() . " WHERE id = " . $id);
 		var_dump($query->queryString);
 		
 		$log = new Log();
@@ -151,7 +152,7 @@ class Entity
 		}
 	}
 	
-	public function update($table)
+	public function update()
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
@@ -164,7 +165,8 @@ class Entity
 		}
 		$newValues = substr($newValues, 0, -2); // remove last ','
 		
-		$query = $dbh->query("UPDATE " . $table . " SET " . $newValues . " WHERE id = " . $this->getId());
+		$query = $dbh->query("UPDATE " . $this->getTable()
+			. " SET " . $newValues . " WHERE id = " . $this->getId());
 		var_dump($query->queryString);
 		
 		$log = new Log();
@@ -177,9 +179,9 @@ class Entity
 		}
 	}
 	
-	public function isExist($table, $id)
+	public function isExist($id)
 	{
-		$result = $this->findById($table, $id);
+		$result = $this->findById($id);
 		if (!$result) {
 			return false;
 		} else {
@@ -187,16 +189,16 @@ class Entity
 		}
 	}
 	
-	public function count($table, $where = null)
+	public function count($where = null)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
 		if (null == $where) {
-			$query = "SELECT COUNT(*) FROM " . $table;
+			$query = "SELECT COUNT(*) FROM " . $this->getTable();
 		} else {
 			$paramWhere = $this->where($where);
-			$query = "SELECT COUNT(*) FROM " . $table . " WHERE " . $paramWhere;
+			$query = "SELECT COUNT(*) FROM " . $this->getTable() . " WHERE " . $paramWhere;
 		}
 		
 		$query = $dbh->query($query, PDO::FETCH_ASSOC);

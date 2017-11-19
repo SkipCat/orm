@@ -14,7 +14,6 @@ class Film extends Entity
 	protected $duration;
 	protected $genre = null;
 	
-	
 	public function getTable()
 	{
 		return $this->table;
@@ -23,6 +22,11 @@ class Film extends Entity
 	public function getId()
 	{
 		return $this->id;
+	}
+	
+	public function setId($id)
+	{
+		$this->id = $id;
 	}
 	
 	public function getTitle()
