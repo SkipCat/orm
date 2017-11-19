@@ -5,6 +5,7 @@ namespace src;
 use PDO;
 use src\Connection;
 use src\Log;
+use src\Showing;
 
 class Entity
 {
@@ -113,7 +114,8 @@ class Entity
 				}
 			} else {
 				if (null !== $join) {
-					// join only
+					//$paramJoin = $this->join($join);
+					$query = "SELECT * FROM " . $this->getTable() . " JOIN " . $join;
 				} else {
 					echo 'No parameter indicated.';
 					return false;
@@ -138,6 +140,14 @@ class Entity
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
+		
+		// delete related entities first
+		foreach ($this->getRelatedTables() as $relatedTable) {
+			$fieldId = $this->getTable() . '_id';
+			$q = $dbh->query("DELETE FROM " . $relatedTable . " WHERE " . $fieldId . " = " . $id);
+			$log = new Log();
+			$q ? $log->writeRequestLog($q->queryString) : $log->writeErrorLog($q->queryString, null, $q->errorInfo());
+		}
 		
 		$query = $dbh->query("DELETE FROM " . $this->getTable() . " WHERE id = " . $id);
 		var_dump($query->queryString);
@@ -247,6 +257,7 @@ class Entity
 	{
 		$properties = get_object_vars($this);
 		unset($properties['table']);
+		unset($properties['relatedTables']);
 		unset($properties['id']);
 		
 		return $properties;

@@ -7,6 +7,10 @@ use src\Entity;
 class Film extends Entity
 {
 	protected $table = 'film';
+	protected $relatedTables = [
+		'showing'
+	];
+	
 	protected $id;
 	protected $title;
 	protected $producer;
@@ -14,9 +18,15 @@ class Film extends Entity
 	protected $duration;
 	protected $genre = null;
 	
+	
 	public function getTable()
 	{
 		return $this->table;
+	}
+	
+	public function getRelatedTables()
+	{
+		return $this->relatedTables;
 	}
 	
 	public function getId()
