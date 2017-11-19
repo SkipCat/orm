@@ -50,7 +50,6 @@ class EntityManager
 		$id = (int)$id;
 		$data = $dbh->query("SELECT * FROM " . $this->getTable() . " WHERE id = " . $id, PDO::FETCH_ASSOC);
 		$result = $data->fetch();
-		var_dump($result);
 		
 		$log = new LogManager();
 		if ($result) {

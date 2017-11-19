@@ -7,6 +7,8 @@ use src\Model\EntityManager;
 class Showing extends EntityManager
 {
 	protected $table = 'showing';
+	
+	protected $id;
     protected $filmId;
     protected $showtime;
 	
@@ -14,6 +16,16 @@ class Showing extends EntityManager
 	public function getTable()
 	{
 		return $this->table;
+	}
+	
+	public function getId()
+	{
+		return $this->id;
+	}
+	
+	public function setId($id)
+	{
+		$this->id = $id;
 	}
 	
 	public function getFilmId()
