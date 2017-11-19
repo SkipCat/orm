@@ -6,6 +6,7 @@ use src\Entity;
 
 class Film extends Entity
 {
+	protected $table = 'film';
 	protected $id;
 	protected $title;
 	protected $producer;
@@ -14,14 +15,14 @@ class Film extends Entity
 	protected $genre = null;
 	
 	
+	public function getTable()
+	{
+		return $this->table;
+	}
+	
 	public function getId()
 	{
 		return $this->id;
-	}
-	
-	public function setId($id)
-	{
-		$this->id = $id;
 	}
 	
 	public function getTitle()

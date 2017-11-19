@@ -8,7 +8,7 @@ use src\Log;
 
 class Entity
 {
-	public function insert($table, $data = [])
+	public function insert($table)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
@@ -16,7 +16,7 @@ class Entity
 		$query = 'INSERT INTO `' . $table . '` VALUES (NULL, ';
 		$first = true;
 		
-		unset($data['id']);
+		$data = $this->getAllProperties();
 		foreach ($data AS $k => $value) {
 			if (!$first) {
 				$query .= ', ';
@@ -32,9 +32,13 @@ class Entity
 		$exec = $sth->execute($data);
 		
 		$log = new Log();
-		$exec ? $log->writeRequestLog($query, $data) : $log->writeErrorLog($query, $data, $sth->errorInfo());
-		
-		return true;
+		if ($exec) {
+			$log->writeRequestLog($query);
+			return true;
+		} else {
+			$log->writeErrorLog($query, $data, $sth->errorInfo());
+			return false;
+		}
 	}
 	
 	public function findById($table, $id)
@@ -147,20 +151,20 @@ class Entity
 		}
 	}
 	
-	public function update($table, $id, $data = [])
+	public function update($table)
 	{
 		$conn = new Connection();
 		$dbh = $conn->getDbh();
 		
 		$newValues = '';
-		foreach ($data as $key => $value) {
+		foreach ($this->getAllProperties() as $key => $value) {
 			if ($key !== 'id') {
 				$newValues .= $key . ' = "' . $value . '", ';
 			}
 		}
 		$newValues = substr($newValues, 0, -2); // remove last ','
 		
-		$query = $dbh->query("UPDATE " . $table . " SET " . $newValues . " WHERE id = " . $id);
+		$query = $dbh->query("UPDATE " . $table . " SET " . $newValues . " WHERE id = " . $this->getId());
 		var_dump($query->queryString);
 		
 		$log = new Log();
@@ -168,7 +172,7 @@ class Entity
 			$log->writeRequestLog($query->queryString, $newValues);
 			return true;
 		} else {
-			$log->writeErrorLog($query->queryString, $data, $query->errorInfo());
+			$log->writeErrorLog($query->queryString, $this->getAllProperties(), $query->errorInfo());
 			return false;
 		}
 	}
@@ -239,7 +243,11 @@ class Entity
 	
 	public function getAllProperties()
 	{
-		return get_object_vars($this);
+		$properties = get_object_vars($this);
+		unset($properties['table']);
+		unset($properties['id']);
+		
+		return $properties;
 	}
 	
 	public function where($data = [])
