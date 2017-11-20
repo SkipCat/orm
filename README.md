@@ -35,8 +35,12 @@ Pour tester une fonctionnalité :
 2. Exécutez ensuite le fichier déplacé en passant bien les paramètres requis. Par exemple, pour exécuter le fichier **add_film.php**, tapez la commande suivante :
 
 	```
-	php run add_film.php "Inception" "Christopher Nolan" "2010-07-16" 148 "syfy" 
+	php add_film.php find_showing.php
 	```
+
+/!\ Attention, certaines méthodes nécessitent des types spécifiques passés en paramètres. Si votre commande ne s'exécute, vérifiez dans la méthode de l'**EntityManager** le type attendu. Un exemple de commande sera également fourni dans chaque fichier.
+
+Pour un souci de légèreté, les différentes méthodes manipulant des requêtes SELECT sont toutes consignées dans un même fichier. Pour exécuter une méthode, il faudra donc la décommenter et commenter les autres.
 
 Note : Les fichiers du dossier **example/** et les entités **Film** et **Showing** ne sont là que pour ces tests. Il n'y a donc aucun problème à leur suppression.
 

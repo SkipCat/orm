@@ -84,9 +84,9 @@ class EntityManager
 		$conn = new ConnectionManager();
 		$dbh = $conn->getDbh();
 		
-		if (null !== $where) {
-			if (null !== $orderBy) {
-				if (null !== $join) {
+		if (null !== $where and $where !== 'null') {
+			if (null !== $orderBy and $orderBy !== 'null') {
+				if (null !== $join and $join !== 'null') {
 					$paramWhere = $this->where($where);
 					$paramOrderBy = $this->orderBy($orderBy);
 					$query = "SELECT * FROM " . $this->getTable() . $join . " WHERE " . $paramWhere
@@ -98,7 +98,7 @@ class EntityManager
 						. " ORDER BY " . $paramOrderBy;
 				}
 			} else {
-				if (null !== $join) {
+				if (null !== $join and $join !== 'null') {
 					$paramWhere = $this->where($where);
 					$query = "SELECT * FROM " . $this->getTable() . $join . " WHERE " . $paramWhere;
 				} else {
@@ -107,8 +107,8 @@ class EntityManager
 				}
 			}
 		} else {
-			if (null !== $orderBy) {
-				if (null !== $join) {
+			if (null !== $orderBy and $orderBy !== 'null') {
+				if (null !== $join and $join !== 'null') {
 					$paramOrderBy = $this->orderBy($orderBy);
 					$query = "SELECT * FROM " . $this->getTable() . $join . " ORDER BY " . $paramOrderBy;
 				} else {
@@ -116,7 +116,7 @@ class EntityManager
 					$query = "SELECT * FROM " . $this->getTable() . " ORDER BY " . $paramOrderBy;
 				}
 			} else {
-				if (null !== $join) {
+				if (null !== $join and $join !== 'null') {
 					$query = "SELECT * FROM " . $this->getTable() . $join;
 				} else {
 					echo 'No parameter indicated.';
@@ -146,7 +146,7 @@ class EntityManager
 		// delete related entities first
 		if (method_exists($this, 'getRelatedTables')) {
 			foreach ($this->getRelatedTables() as $relatedTable) {
-				$fieldId = $this->getTable() . '_id';
+				$fieldId = $this->getTable() . 'Id';
 				$q = $dbh->query("DELETE FROM " . $relatedTable . " WHERE " . $fieldId . " = " . $id);
 				$log = new LogManager();
 				$q ? $log->writeRequestLog($q->queryString) : $log->writeErrorLog($q->queryString, null, $q->errorInfo());

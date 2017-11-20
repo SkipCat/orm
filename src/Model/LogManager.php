@@ -23,7 +23,7 @@ class LogManager
 	
 	public function writeErrorLog($request, $params, $error)
 	{
-		var_dump($request, $params, $error);
+		echo 'Something\'s wrong. Please check the error.log file for more information.';
 		
 		$file = fopen('app/logs/error.log', 'a');
 		$params = $this->checkParams($params);
