@@ -18,8 +18,9 @@ cd orm/
 ```
 
 Ensuite, configurez votre base de données :
-1. Importez le fichier **database.sql**.
-2. Modifiez le fichier **parameters.json** situé dans **app/config/** pour qu'il contienne les informations de la base de données.
+1. Créez votre base de données.
+2. Importez le fichier **database.sql** dans votre base.
+3. Modifiez le fichier **parameters.json** situé dans **app/config/** pour qu'il contienne les informations de la base de données.
 
 Pas besoin de surcharger le projet avec <i>composer</i> pour utiliser l'autoload, c'est le fichier **autoload.php** qui s'en charge.
 
