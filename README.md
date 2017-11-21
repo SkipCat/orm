@@ -83,3 +83,6 @@ Chaque requête ou erreur est recensée dans un fichier **request.log** ou **err
 
 Ils vous seront utiles pour vérifier le bon déroulement des requêtes SQL, et à debugger le cas échéant.
 
+### Créer une nouvelle table dans la base de données
+
+Pas de contrainte particulière, à l'exception du fait que les colonnes doivent être nommées en **camelCase**.
