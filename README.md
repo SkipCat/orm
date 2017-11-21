@@ -1,4 +1,5 @@
-# ORM Project
+
+# ORM Project (Cécile Huguet)
 
 Ce projet constitue une ébauche d'ORM (ou Mapping Objet-Relationnel) en PHP. Cet outil vous permettra de gérer les relations entre les objets entité de votre projet et une base de données.
 En aucun cas cet outil ne remplacera un ORM poussé comme Doctrine ou Eloquent.
