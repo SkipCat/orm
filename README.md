@@ -86,3 +86,14 @@ Ils vous seront utiles pour vérifier le bon déroulement des requêtes SQL, et 
 ### Créer une nouvelle table dans la base de données
 
 Pas de contrainte particulière, à l'exception du fait que les colonnes doivent être nommées en **camelCase**.
+
+### Utiliser les méthodes
+
+* **insert()** : ajoute l'object créé dans la base
+* **update()** : met à jour l'objet correspondant dans la base
+* **delete($id)** : supprime l'objet correspondant à l'id passé dans la base 
+* **findById($id)** : récupère l'objet correspondant à l'id donné depuis la base
+* **findAll()** : récupère tous les objets liés à l'instance de l'entité créée depuis la base
+* **findByParam($join, $where, $orderBy)** : récupère tous les objets correspondants aux critères passés en paramètres depuis la base
+* **isExist($id)** : vérifie si l'objet correspondant à l'id existe dans la base
+* **count()** : compte le nombre d'objets liés à l'instance créée dans la base
